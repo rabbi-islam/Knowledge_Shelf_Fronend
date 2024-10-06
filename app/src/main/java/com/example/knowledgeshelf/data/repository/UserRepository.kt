@@ -46,4 +46,44 @@ class UserRepository @Inject constructor(private val apiService: ApiServices) {
             Resource.Error(e.localizedMessage ?: "An Error Occurred")
         }
     }
+
+    // checking token
+    suspend fun checkTokensAndLogin(context: Context): Boolean {
+        val tokenManager = TokenManager(context)
+        val accessToken = tokenManager.getAccessToken()
+        val refreshToken = tokenManager.getRefreshToken()
+
+        Log.d("UserRepository", "AccessToken: $accessToken, RefreshToken: $refreshToken")
+
+        return if (accessToken != null) {
+            Log.d("UserRepository", "User is authenticated with access token.")
+            true
+        } else if (refreshToken != null) {
+            try {
+                val response = apiService.refreshToken(refreshToken)
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        tokenManager.saveTokens(responseBody.accessToken, responseBody.refreshToken)
+                        Log.d("UserRepository", "Tokens refreshed successfully.")
+                        true
+                    } else {
+                        Log.d("UserRepository", "Failed to refresh tokens.")
+                        false
+                    }
+                } else {
+                    Log.d("UserRepository", "Refresh token response unsuccessful.")
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e("UserRepository", "Error refreshing token: ${e.localizedMessage}")
+                false
+            }
+        } else {
+            Log.d("UserRepository", "No valid tokens available.")
+            false
+        }
+    }
+
+
 }

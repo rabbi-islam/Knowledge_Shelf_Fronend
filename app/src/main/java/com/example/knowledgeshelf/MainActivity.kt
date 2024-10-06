@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.knowledgeshelf.navigation.Navigation
 import com.example.knowledgeshelf.presentation.ui.theme.KnowledgeShelfTheme
@@ -20,14 +22,20 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    //private val viewModel: UserViewmodel by viewModels()
+
+    private val viewModel: UserViewmodel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             KnowledgeShelfTheme {
+                val context = LocalContext.current // Using 'this' to get the Activity context
 
-                Navigation()
+                LaunchedEffect(Unit) {
+                    viewModel.checkUserAuthentication(context) // Call authentication check here
+                }
+                Navigation(viewModel = viewModel)
 
             }
         }

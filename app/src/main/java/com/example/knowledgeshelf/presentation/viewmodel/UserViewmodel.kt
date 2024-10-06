@@ -9,6 +9,7 @@ import com.example.knowledgeshelf.data.model.auth.register.RegistrationRequest
 import com.example.knowledgeshelf.data.model.auth.register.RegistrationResponse
 import com.example.knowledgeshelf.domain.Resource
 import com.example.knowledgeshelf.data.repository.UserRepository
+import com.example.knowledgeshelf.utils.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +28,10 @@ class UserViewmodel @Inject constructor (private val userRepository: UserReposit
     val loginResult: StateFlow<Resource<LoginResponse>?>
         get() = _loginResult
 
+    private val _isUserAuthenticated = MutableStateFlow(false)
+    val isUserAuthenticated: StateFlow<Boolean> = _isUserAuthenticated
+
+
     fun registerUser(registrationRequest: RegistrationRequest) {
         viewModelScope.launch {
             _registrationResult.value = Resource.Loading
@@ -42,4 +47,14 @@ class UserViewmodel @Inject constructor (private val userRepository: UserReposit
             _loginResult.value = result
         }
     }
+
+    fun checkUserAuthentication(context: Context) {
+        viewModelScope.launch {
+            val isAuthenticated = userRepository.checkTokensAndLogin(context)
+            _isUserAuthenticated.value = isAuthenticated
+        }
+    }
+
+
+
 }
