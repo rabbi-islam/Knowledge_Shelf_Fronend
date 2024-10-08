@@ -2,6 +2,7 @@ package com.example.knowledgeshelf.navigation
 
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed interface Screens {
 
     @Serializable
@@ -14,5 +15,15 @@ sealed interface Screens {
     data object LoginScreen : Screens
 
     @Serializable
-    data object ProfileScreen : Screens
+    data object DashboardScreen : Screens
+
+//    @Serializable
+//    data object HomeScreen : Screens
+//
+//    @Serializable
+//    data object CartScreen : Screens
+//
+//    @Serializable
+//    data object ProfileScreen : Screens
+
 }

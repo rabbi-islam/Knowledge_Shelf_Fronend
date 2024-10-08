@@ -1,5 +1,6 @@
 package com.example.knowledgeshelf.navigation
 
+import DashboardScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -8,14 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.knowledgeshelf.presentation.view.AnimatedSplashScreen
-import com.example.knowledgeshelf.presentation.view.SplashScreen
 import com.example.knowledgeshelf.presentation.view.login.LoginScreen
-import com.example.knowledgeshelf.presentation.view.profile.ProfileScreen
 import com.example.knowledgeshelf.presentation.view.registration.SignUpScreen
 import com.example.knowledgeshelf.presentation.viewmodel.UserViewmodel
 import kotlinx.coroutines.delay
@@ -37,7 +35,7 @@ fun Navigation(modifier: Modifier = Modifier, viewModel: UserViewmodel) {
     LaunchedEffect(isSplashFinished) {
         if (isSplashFinished) {
             if (isAuthenticated) {
-                navController.navigate(Screens.ProfileScreen) {
+                navController.navigate(Screens.DashboardScreen) {
                     popUpTo(0) // Clears the backstack
                 }
             } else {
@@ -79,13 +77,12 @@ fun Navigation(modifier: Modifier = Modifier, viewModel: UserViewmodel) {
                     navController.navigate(Screens.RegistrationScreen)
                 },
                 onLoginSuccess = {
-                    navController.navigate(Screens.ProfileScreen)
+                    navController.navigate(Screens.DashboardScreen)
                 }
             )
         }
-
-        composable<Screens.ProfileScreen> {
-          ProfileScreen()
+        composable<Screens.DashboardScreen> {
+            DashboardScreen()
         }
     }
 }

@@ -2,6 +2,7 @@ package com.example.knowledgeshelf.data.repository
 
 import android.content.Context
 import android.util.Log
+import com.auth0.android.jwt.JWT
 import com.example.knowledgeshelf.data.model.auth.register.RegistrationRequest
 import com.example.knowledgeshelf.data.model.auth.register.RegistrationResponse
 import com.example.knowledgeshelf.data.apis.ApiServices
@@ -53,10 +54,7 @@ class UserRepository @Inject constructor(private val apiService: ApiServices) {
         val accessToken = tokenManager.getAccessToken()
         val refreshToken = tokenManager.getRefreshToken()
 
-        Log.d("UserRepository", "AccessToken: $accessToken, RefreshToken: $refreshToken")
-
         return if (accessToken != null) {
-            Log.d("UserRepository", "User is authenticated with access token.")
             true
         } else if (refreshToken != null) {
             try {
@@ -65,25 +63,47 @@ class UserRepository @Inject constructor(private val apiService: ApiServices) {
                     val responseBody = response.body()
                     if (responseBody != null) {
                         tokenManager.saveTokens(responseBody.accessToken, responseBody.refreshToken)
-                        Log.d("UserRepository", "Tokens refreshed successfully.")
                         true
                     } else {
-                        Log.d("UserRepository", "Failed to refresh tokens.")
                         false
                     }
                 } else {
-                    Log.d("UserRepository", "Refresh token response unsuccessful.")
                     false
                 }
             } catch (e: Exception) {
-                Log.e("UserRepository", "Error refreshing token: ${e.localizedMessage}")
                 false
             }
         } else {
-            Log.d("UserRepository", "No valid tokens available.")
             false
         }
     }
 
+    private fun decodeJWT(token: String): UserProfile? {
+        return try {
+            val jwt = JWT(token)
+            val name = jwt.getClaim("fullName").asString() // Replace with your actual claims
+            val email = jwt.getClaim("email").asString()
+
+            UserProfile(fullName = name, email = email) // Create a UserProfile data class to hold this information
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun getUserProfile(context: Context): UserProfile? {
+        val tokenManager = TokenManager(context)
+        val accessToken = tokenManager.getAccessToken()
+        return accessToken?.let { decodeJWT(it) }
+    }
+
+    fun logoutUser(context: Context) {
+        val tokenManager = TokenManager(context)
+        tokenManager.clearTokens()
+    }
+
+    data class UserProfile(
+        val fullName: String?,
+        val email: String?
+    )
 
 }

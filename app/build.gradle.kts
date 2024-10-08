@@ -97,5 +97,8 @@ dependencies {
     //jwt tok/en decode
     implementation ("com.auth0.android:jwtdecode:2.0.0")
 
+    //more icon
+    implementation ("androidx.compose.material:material-icons-extended:1.0.1")
+
 
 }

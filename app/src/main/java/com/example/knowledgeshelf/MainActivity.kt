@@ -1,6 +1,9 @@
 package com.example.knowledgeshelf
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,8 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.knowledgeshelf.navigation.Navigation
 import com.example.knowledgeshelf.presentation.ui.theme.KnowledgeShelfTheme
 import com.example.knowledgeshelf.presentation.view.registration.SignUpScreen
@@ -25,18 +32,29 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: UserViewmodel by viewModels()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
+            //hiding status bar
+            val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+            windowInsetsController.hide(WindowInsetsCompat.Type.statusBars())
             KnowledgeShelfTheme {
                 val context = LocalContext.current // Using 'this' to get the Activity context
 
                 LaunchedEffect(Unit) {
                     viewModel.checkUserAuthentication(context) // Call authentication check here
                 }
-                Navigation(viewModel = viewModel)
 
+                // Use Scaffold to manage layout
+                Scaffold(
+                    //containerColor = Color(0xFF1b2a48), // Set background color for the Scaffold
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
+                    Navigation(viewModel = viewModel, modifier = Modifier.padding(innerPadding))
+                }
             }
         }
     }

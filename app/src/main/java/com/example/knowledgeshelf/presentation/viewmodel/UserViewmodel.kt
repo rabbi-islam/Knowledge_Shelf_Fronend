@@ -3,6 +3,7 @@ package com.example.knowledgeshelf.presentation.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.auth0.android.jwt.JWT
 import com.example.knowledgeshelf.data.model.auth.login.LoginRequest
 import com.example.knowledgeshelf.data.model.auth.login.LoginResponse
 import com.example.knowledgeshelf.data.model.auth.register.RegistrationRequest
@@ -31,6 +32,10 @@ class UserViewmodel @Inject constructor (private val userRepository: UserReposit
     private val _isUserAuthenticated = MutableStateFlow(false)
     val isUserAuthenticated: StateFlow<Boolean> = _isUserAuthenticated
 
+    private val _userProfile = MutableStateFlow<UserRepository.UserProfile?>(null)
+    val userProfile: StateFlow<UserRepository.UserProfile?> get() = _userProfile
+
+
 
     fun registerUser(registrationRequest: RegistrationRequest) {
         viewModelScope.launch {
@@ -54,7 +59,16 @@ class UserViewmodel @Inject constructor (private val userRepository: UserReposit
             _isUserAuthenticated.value = isAuthenticated
         }
     }
-
-
+    fun loadUserProfile(context: Context) {
+        viewModelScope.launch {
+            val profile = userRepository.getUserProfile(context)
+            _userProfile.value = profile
+        }
+    }
+    fun logoutUser(context: Context) {
+        viewModelScope.launch {
+            userRepository.logoutUser(context)
+        }
+    }
 
 }
