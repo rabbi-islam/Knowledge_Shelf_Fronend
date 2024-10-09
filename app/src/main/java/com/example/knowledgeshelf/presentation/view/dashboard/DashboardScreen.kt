@@ -18,7 +18,7 @@ import com.example.knowledgeshelf.navigation.Screens
 import com.example.knowledgeshelf.presentation.view.dashboard.BottomNavGraph
 
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(onLogout: () -> Unit) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -26,7 +26,7 @@ fun DashboardScreen() {
             BottomNavigationBar(navController = navController)
         }
     ) {
-        BottomNavGraph(navController = navController, modifier = Modifier.padding(it))
+        BottomNavGraph(navController = navController, modifier = Modifier.padding(it), onLogout = {onLogout()})
     }
 }
 

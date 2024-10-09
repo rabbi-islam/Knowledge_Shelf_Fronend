@@ -17,13 +17,13 @@ sealed interface Screens {
     @Serializable
     data object DashboardScreen : Screens
 
-//    @Serializable
-//    data object HomeScreen : Screens
-//
-//    @Serializable
-//    data object CartScreen : Screens
-//
-//    @Serializable
-//    data object ProfileScreen : Screens
+    @Serializable
+    data object HomeScreen : Screens
+
+    @Serializable
+    data object CartScreen : Screens
+
+    @Serializable
+    data object ProfileScreen : Screens
 
 }

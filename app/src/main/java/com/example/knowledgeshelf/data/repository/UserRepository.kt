@@ -6,9 +6,11 @@ import com.auth0.android.jwt.JWT
 import com.example.knowledgeshelf.data.model.auth.register.RegistrationRequest
 import com.example.knowledgeshelf.data.model.auth.register.RegistrationResponse
 import com.example.knowledgeshelf.data.apis.ApiServices
+import com.example.knowledgeshelf.data.model.UserProfile
 import com.example.knowledgeshelf.data.model.auth.login.LoginRequest
 import com.example.knowledgeshelf.data.model.auth.login.LoginResponse
 import com.example.knowledgeshelf.domain.Resource
+import com.example.knowledgeshelf.utils.JwtToken
 import com.example.knowledgeshelf.utils.TokenManager
 import javax.inject.Inject
 
@@ -78,22 +80,9 @@ class UserRepository @Inject constructor(private val apiService: ApiServices) {
         }
     }
 
-    private fun decodeJWT(token: String): UserProfile? {
-        return try {
-            val jwt = JWT(token)
-            val name = jwt.getClaim("fullName").asString() // Replace with your actual claims
-            val email = jwt.getClaim("email").asString()
-
-            UserProfile(fullName = name, email = email) // Create a UserProfile data class to hold this information
-        } catch (e: Exception) {
-            null
-        }
-    }
 
     fun getUserProfile(context: Context): UserProfile? {
-        val tokenManager = TokenManager(context)
-        val accessToken = tokenManager.getAccessToken()
-        return accessToken?.let { decodeJWT(it) }
+        return JwtToken.getUserProfileFromToken(context)
     }
 
     fun logoutUser(context: Context) {
@@ -101,9 +90,6 @@ class UserRepository @Inject constructor(private val apiService: ApiServices) {
         tokenManager.clearTokens()
     }
 
-    data class UserProfile(
-        val fullName: String?,
-        val email: String?
-    )
+
 
 }

@@ -27,7 +27,7 @@ fun Navigation(modifier: Modifier = Modifier, viewModel: UserViewmodel) {
 
     // Show splash screen for a certain duration before checking authentication
     LaunchedEffect(Unit) {
-        delay(2500) // Wait for 3 seconds
+        delay(1500) // Wait for 3 seconds
         isSplashFinished = true // Set splash screen as finished
     }
 
@@ -82,7 +82,11 @@ fun Navigation(modifier: Modifier = Modifier, viewModel: UserViewmodel) {
             )
         }
         composable<Screens.DashboardScreen> {
-            DashboardScreen()
+            DashboardScreen(
+                onLogout = {
+                    navController.navigate(Screens.LoginScreen)
+                }
+            )
         }
     }
 }

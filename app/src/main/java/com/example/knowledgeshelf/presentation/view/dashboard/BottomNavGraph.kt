@@ -10,17 +10,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.knowledgeshelf.data.model.BottomNavItem
 import com.example.knowledgeshelf.navigation.Screens
+import com.example.knowledgeshelf.presentation.view.HomeScreen
 
 
 @Composable
-fun BottomNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
+fun BottomNavGraph(navController: NavHostController, modifier: Modifier = Modifier, onLogout: () -> Unit) {
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Home.route,
         modifier = modifier
     ) {
         composable(BottomNavItem.Home.route) {
-            HomeScreen() // Define HomeScreen content
+            HomeScreen()
         }
         composable(BottomNavItem.Cart.route) {
             CartScreen() // Define CartScreen content
@@ -29,6 +30,8 @@ fun BottomNavGraph(navController: NavHostController, modifier: Modifier = Modifi
             ProfileScreen(
                 onBackClick = { navController.navigate(BottomNavItem.Home.route) },
                 onSuccessLogout = {
+                        onLogout()
+
 //                    navController.navigate(Screens.LoginScreen.toString()) {
 //                        popUpTo(Screens.DashboardScreen.toString()) { inclusive = true }
 //                    }
@@ -39,10 +42,7 @@ fun BottomNavGraph(navController: NavHostController, modifier: Modifier = Modifi
 }
 
 
-@Composable
-fun HomeScreen() {
-    Text(modifier = Modifier.fillMaxWidth(), text = "Home Screen")
-}
+
 
 @Composable
 fun CartScreen() {

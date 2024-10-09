@@ -1,3 +1,4 @@
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import com.example.knowledgeshelf.R
 import com.example.knowledgeshelf.navigation.Screens
 import com.example.knowledgeshelf.presentation.viewmodel.UserViewmodel
@@ -104,14 +106,18 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Box(contentAlignment = Alignment.BottomEnd) {
-                        Image(
-                            painter = painterResource(id = R.drawable.man),
-                            contentDescription = "Profile Picture",
-                            modifier = Modifier
-                                .size(120.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
+                        userProfile?.let {
+                            val avatarUrl = remember { it.avatar.toString() }
+                            AsyncImage(
+                                model = avatarUrl,
+                                contentDescription = "Profile Picture",
+                                modifier = Modifier
+                                    .size(120.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+
                         IconButton(
                             onClick = { /* TODO: Implement image update logic */ },
                             modifier = Modifier

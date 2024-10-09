@@ -100,5 +100,9 @@ dependencies {
     //more icon
     implementation ("androidx.compose.material:material-icons-extended:1.0.1")
 
+    //image loading library
+    implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-rc01")
+
 
 }
