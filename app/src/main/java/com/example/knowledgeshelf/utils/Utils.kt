@@ -9,7 +9,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 
 object Utils {
     fun uriToPngMultipart(uri: Uri, context: Context, paramName: String = "file"): MultipartBody.Part? {

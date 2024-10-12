@@ -7,6 +7,7 @@ import com.example.knowledgeshelf.data.model.UserProfile
 import com.example.knowledgeshelf.data.model.auth.register.RegistrationResponse
 import com.example.knowledgeshelf.data.model.book.AddBookRequest
 import com.example.knowledgeshelf.data.model.book.AddBookResponse
+import com.example.knowledgeshelf.data.model.book.BookRequest
 import com.example.knowledgeshelf.data.model.book.Books
 import com.example.knowledgeshelf.data.model.book.DeleteBookResponse
 import com.example.knowledgeshelf.data.repository.BookRepository
@@ -76,52 +77,13 @@ class BookViewmodel @Inject constructor(private val bookRepository: BookReposito
         }
     }
 
-    fun addBook(
-        name: String,
-        price: Double,
-        authorName: String,
-        stock: Int,
-        description: String,
-        image: MultipartBody.Part, // File upload part
-        publishedDate: String
-    ) {
+    fun addBook(bookRequest: BookRequest, image: MultipartBody.Part) {
         viewModelScope.launch {
             _addBookResult.value = Resource.Loading
-
-            // Call the repository method with individual parameters
-            val result = bookRepository.addBook(
-                name = name,
-                price = price,
-                authorName = authorName,
-                stock = stock,
-                description = description,
-                image = image, // MultipartBody.Part for image
-                publishedDate = publishedDate
-            )
-
+            val result = bookRepository.addBook(bookRequest, image)
             _addBookResult.value = result
-
-            // Clear the result after a delay
-//            if (result is Resource.Success || result is Resource.Error) {
-//                delay(2000) // Optional delay to show success/error message
-//                _addBookResult.value = null
-//            }
         }
     }
-
-
-//    fun addBook(bookRequest: AddBookRequest) {
-//        viewModelScope.launch {
-//            _addBookResult.value = Resource.Loading
-//            val result = bookRepository.addBook(bookRequest)
-//            _addBookResult.value = result
-//
-//            if (result is Resource.Success || result is Resource.Error) {
-//                delay(2000) // Optional delay to show success/error message
-//                _addBookResult.value = null
-//            }
-//        }
-//    }
 
 
 

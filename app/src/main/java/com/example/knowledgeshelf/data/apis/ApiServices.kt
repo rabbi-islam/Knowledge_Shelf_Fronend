@@ -18,6 +18,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.PartMap
 import retrofit2.http.Path
 
 interface ApiServices {
@@ -44,13 +45,8 @@ interface ApiServices {
     @Multipart
     @POST("book")
     suspend fun addBook(
-        @Part("name") name: RequestBody,
-        @Part("price") price: RequestBody,
-        @Part("authorName") authorName: RequestBody,
-        @Part("stock") stock: RequestBody,
-        @Part("description") description: RequestBody,
-        @Part image: MultipartBody.Part, // File upload part
-        @Part("publishedDate") publishedDate: RequestBody
+        @PartMap bookData: Map<String, @JvmSuppressWildcards RequestBody>,
+        @Part image: MultipartBody.Part? // File upload part
     ): Response<AddBookResponse>
 
 }

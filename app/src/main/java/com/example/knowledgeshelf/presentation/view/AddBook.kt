@@ -10,13 +10,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -29,7 +26,6 @@ import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,20 +51,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
-import com.example.knowledgeshelf.data.model.book.AddBookRequest
 import com.example.knowledgeshelf.data.model.book.AddBookResponse
+import com.example.knowledgeshelf.data.model.book.BookRequest
 import com.example.knowledgeshelf.domain.Resource
 import com.example.knowledgeshelf.presentation.viewmodel.BookViewmodel
-import com.example.knowledgeshelf.utils.Utils
 import com.example.knowledgeshelf.utils.Utils.uriToPngMultipart
 import com.example.knowledgeshelf.utils.Validator
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.date_time.DateTimeDialog
 import com.maxkeppeler.sheets.date_time.models.DateTimeSelection
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -95,9 +86,11 @@ fun AddBookScreen(
         when (addBookState) {
             is Resource.Success -> {
                 Toast.makeText(context, (addBookState as Resource.Success<AddBookResponse>).message ?: "Book added successfully", Toast.LENGTH_SHORT).show()
+                Log.d("parameter", (addBookState as Resource.Success<AddBookResponse>).message!!)
             }
             is Resource.Error -> {
                 Toast.makeText(context, (addBookState as Resource.Error<AddBookResponse>).message ?: "Error Occurred", Toast.LENGTH_SHORT).show()
+                Log.d("parameter", (addBookState as Resource.Error<AddBookResponse>).message)
             }
             Resource.Loading -> {
                 // Optionally show a loading indicator
@@ -280,16 +273,16 @@ fun AddBookScreen(
                 if (imageError.isEmpty() && selectedImageUri != null){
                     val imagePart = uriToPngMultipart(selectedImageUri!!, context, "image")
 
-                    // Call the ViewModel function to add the book
-                    viewmodel.addBook(
-                        name = name,
-                        price = price.toDouble(),
-                        authorName = authorName,
-                        stock = stock.toInt(),
-                        description = description,
-                        image = imagePart!!,
-                        publishedDate = selectedDate.value?.toString() ?: ""
-                    )
+                   val bookRequest = BookRequest(
+                       name = name,
+                       price = price.toDouble(),
+                       authorName = authorName,
+                       stock = stock.toInt(),
+                       description = description,
+                       image = imagePart!!,
+                       publishedDate = selectedDate.value?.toString() ?: ""
+                   )
+                    viewmodel.addBook(bookRequest, image = imagePart)
                 }
 
 
