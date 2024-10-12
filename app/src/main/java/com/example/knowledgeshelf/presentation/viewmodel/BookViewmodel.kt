@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.knowledgeshelf.data.model.UserProfile
 import com.example.knowledgeshelf.data.model.auth.register.RegistrationResponse
+import com.example.knowledgeshelf.data.model.book.AddBookRequest
+import com.example.knowledgeshelf.data.model.book.AddBookResponse
 import com.example.knowledgeshelf.data.model.book.Books
 import com.example.knowledgeshelf.data.model.book.DeleteBookResponse
 import com.example.knowledgeshelf.data.repository.BookRepository
@@ -14,6 +16,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +31,10 @@ class BookViewmodel @Inject constructor(private val bookRepository: BookReposito
 
     private val _userInfoFromToken = MutableStateFlow<UserProfile?>(null)
     val userInfoFromToken: StateFlow<UserProfile?> get() = _userInfoFromToken
+
+    private val _addBookResult = MutableStateFlow<Resource<AddBookResponse>?>(null)
+    val addBookResult: StateFlow<Resource<AddBookResponse>?>
+        get() = _addBookResult
 
 
     init {
@@ -68,6 +75,54 @@ class BookViewmodel @Inject constructor(private val bookRepository: BookReposito
             getBooks()
         }
     }
+
+    fun addBook(
+        name: String,
+        price: Double,
+        authorName: String,
+        stock: Int,
+        description: String,
+        image: MultipartBody.Part, // File upload part
+        publishedDate: String
+    ) {
+        viewModelScope.launch {
+            _addBookResult.value = Resource.Loading
+
+            // Call the repository method with individual parameters
+            val result = bookRepository.addBook(
+                name = name,
+                price = price,
+                authorName = authorName,
+                stock = stock,
+                description = description,
+                image = image, // MultipartBody.Part for image
+                publishedDate = publishedDate
+            )
+
+            _addBookResult.value = result
+
+            // Clear the result after a delay
+//            if (result is Resource.Success || result is Resource.Error) {
+//                delay(2000) // Optional delay to show success/error message
+//                _addBookResult.value = null
+//            }
+        }
+    }
+
+
+//    fun addBook(bookRequest: AddBookRequest) {
+//        viewModelScope.launch {
+//            _addBookResult.value = Resource.Loading
+//            val result = bookRepository.addBook(bookRequest)
+//            _addBookResult.value = result
+//
+//            if (result is Resource.Success || result is Resource.Error) {
+//                delay(2000) // Optional delay to show success/error message
+//                _addBookResult.value = null
+//            }
+//        }
+//    }
+
 
 
 

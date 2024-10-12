@@ -18,7 +18,7 @@ sealed interface Screens {
     data object DashboardScreen : Screens
 
     @Serializable
-    data object HomeScreen : Screens
+    data object AddBookScreen : Screens
 
     @Serializable
     data object CartScreen : Screens

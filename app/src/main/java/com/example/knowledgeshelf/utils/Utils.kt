@@ -1,28 +1,25 @@
 package com.example.knowledgeshelf.utils
 
 import android.content.Context
-import android.view.View
-import android.widget.TextView
-import android.widget.Toast
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
-object Utils{
-//    fun showColoredToast(context: Context, message: String) {
-//        val toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
-//        val view = toast.view
-//
-//        // Check if view is not null
-//        if (view != null) {
-//            view.setBackgroundResource(android.R.drawable.toast_frame) // Use toast background
-//
-//            // Set background color to red
-//            view.setBackgroundColor(android.graphics.Color.RED)
-//
-//            val textView = view.findViewById<TextView>(android.R.id.message)
-//            textView?.setTextColor(android.graphics.Color.WHITE) // Set text color to white
-//            textView?.textSize = 16f // Set text size
-//            textView?.setPadding(20, 10, 20, 10) // Optional: Add padding to the text
-//        }
-//
-//        toast.show()
-//    }
+object Utils {
+    fun uriToPngMultipart(uri: Uri, context: Context, paramName: String = "file"): MultipartBody.Part? {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        val tempFile = File(context.cacheDir, "tempFile.png")
+        FileOutputStream(tempFile).use { outputStream ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        }
+        val requestFile = RequestBody.create("image/png".toMediaType(), tempFile)
+        return MultipartBody.Part.createFormData(paramName, tempFile.name, requestFile)
+    }
 }

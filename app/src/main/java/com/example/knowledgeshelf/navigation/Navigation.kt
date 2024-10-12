@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.knowledgeshelf.presentation.view.AddBookScreen
 import com.example.knowledgeshelf.presentation.view.AnimatedSplashScreen
 import com.example.knowledgeshelf.presentation.view.login.LoginScreen
 import com.example.knowledgeshelf.presentation.view.registration.SignUpScreen
@@ -85,8 +86,14 @@ fun Navigation(modifier: Modifier = Modifier, viewModel: UserViewmodel) {
             DashboardScreen(
                 onLogout = {
                     navController.navigate(Screens.LoginScreen)
+                },
+                onAddButtonClick = {
+                    navController.navigate(Screens.AddBookScreen)
                 }
             )
+        }
+        composable<Screens.AddBookScreen> {
+            AddBookScreen()
         }
     }
 }
