@@ -21,9 +21,15 @@ sealed interface Screens {
     data object AddBookScreen : Screens
 
     @Serializable
-    data object CartScreen : Screens
+    data class CheckoutScreen(val name:String, val price:String, val authorName:String, val image:String) : Screens
 
     @Serializable
-    data object ProfileScreen : Screens
+    data object HomeNavScreen : Screens
+
+    @Serializable
+    data object CartNavScreen : Screens
+
+    @Serializable
+    data object ProfileNavScreen : Screens
 
 }

@@ -5,7 +5,6 @@ import com.example.knowledgeshelf.data.model.auth.login.LoginResponse
 import com.example.knowledgeshelf.data.model.auth.login.Tokens
 import com.example.knowledgeshelf.data.model.auth.register.RegistrationRequest
 import com.example.knowledgeshelf.data.model.auth.register.RegistrationResponse
-import com.example.knowledgeshelf.data.model.book.AddBookRequest
 import com.example.knowledgeshelf.data.model.book.AddBookResponse
 import com.example.knowledgeshelf.data.model.book.Books
 import com.example.knowledgeshelf.data.model.book.DeleteBookResponse
@@ -46,7 +45,7 @@ interface ApiServices {
     @POST("book")
     suspend fun addBook(
         @PartMap bookData: Map<String, @JvmSuppressWildcards RequestBody>,
-        @Part image: MultipartBody.Part? // File upload part
+        @Part image: MultipartBody.Part?
     ): Response<AddBookResponse>
 
 }

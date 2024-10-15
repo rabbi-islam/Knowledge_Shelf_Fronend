@@ -1,6 +1,7 @@
 package com.example.knowledgeshelf.presentation.view.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,12 +9,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -39,12 +42,15 @@ fun BookCard(
     authorName: String,
     price: String,
     role: String,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onBookClick: () -> Unit,
+    onCartClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .padding(16.dp)
-            .size(200.dp),
+            .size(200.dp)
+            .clickable { onBookClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(8.dp)
@@ -110,6 +116,25 @@ fun BookCard(
                     Icon(
                         imageVector = Icons.Filled.Delete,
                         contentDescription = "Delete Book",
+                        tint = Color.White
+                    )
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.DarkGray)
+                    .align(Alignment.TopEnd)
+                    // Apply padding to the whole background
+            ) {
+                IconButton(
+                    onClick = { onCartClick()},
+                    modifier = Modifier.fillMaxSize() // Fill the parent Box
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ShoppingCart,
+                        contentDescription = "Add to Cart",
                         tint = Color.White
                     )
                 }

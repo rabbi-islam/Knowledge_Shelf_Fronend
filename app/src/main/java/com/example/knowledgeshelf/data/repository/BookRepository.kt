@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.example.knowledgeshelf.data.apis.ApiServices
 import com.example.knowledgeshelf.data.model.UserProfile
-import com.example.knowledgeshelf.data.model.book.AddBookRequest
 import com.example.knowledgeshelf.data.model.book.AddBookResponse
 import com.example.knowledgeshelf.data.model.book.BookRequest
 import com.example.knowledgeshelf.data.model.book.Books
@@ -54,38 +53,24 @@ class BookRepository @Inject constructor(private val apiService: ApiServices) {
         }
     }
 
-    suspend fun addBook(bookRequest: BookRequest, image: MultipartBody.Part):Resource<AddBookResponse>{
+    suspend fun addBook(bookRequest: BookRequest, image: MultipartBody.Part): Resource<AddBookResponse> {
         return try {
-            // Prepare the data
+
             val bookData = bookRequest.toRequestBodyMap()
-            Log.d("bodymap", "bookData: $bookData")
 
-            Log.d("bodymap", "bookData: $image")
+            val response = apiService.addBook(bookData, image)
 
-            val response = apiService.addBook(bookData,  image)
-
-            val responseCode = response.code()
-           Log.d("responseCode", responseCode.toString())
-            // Check the response and return the result
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body != null && body.success) {
-                    Log.d("BookRepository", "Book added successfully: $body")
                     return Resource.Success(message = "Book added", data = body)
                 } else {
                     val errorMessage = body?.message ?: "Unknown error occurred"
-                    Log.e("BookRepository", "Error: $errorMessage")
                     return Resource.Error(errorMessage)
                 }
             } else {
-                Log.e(
-                    "BookRepository",
-                    "Error: ${response.errorBody()?.string() ?: "Unknown error"}"
-                )
                 return Resource.Error(
-                    "Error adding book: ${
-                        response.errorBody()?.string() ?: "Unknown error"
-                    }"
+                    "Error adding book: ${response.errorBody()?.string() ?: "Unknown error"}"
                 )
             }
         } catch (e: Exception) {

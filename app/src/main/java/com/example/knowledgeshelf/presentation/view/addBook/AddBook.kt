@@ -1,4 +1,4 @@
-package com.example.knowledgeshelf.presentation.view
+package com.example.knowledgeshelf.presentation.view.addBook
 
 import android.net.Uri
 import android.os.Build
@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -41,12 +42,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -60,6 +65,7 @@ import com.example.knowledgeshelf.utils.Validator
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.date_time.DateTimeDialog
 import com.maxkeppeler.sheets.date_time.models.DateTimeSelection
+import kotlinx.coroutines.delay
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -69,18 +75,21 @@ import java.time.format.DateTimeFormatter
 fun AddBookScreen(
     modifier: Modifier = Modifier,
     viewmodel: BookViewmodel = hiltViewModel(),
-//    onSubmit: () -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
-    var authorName by remember { mutableStateOf("") }
-    var stock by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    val state = viewmodel.state
 
     var imageError by remember { mutableStateOf("") }
 
     val addBookState by viewmodel.addBookResult.collectAsState()
     val context = LocalContext.current
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
+    //to open keyword automatically when screen launch
+    LaunchedEffect(key1=Unit) {
+        delay(500)
+        focusRequester.requestFocus()
+    }
 
     LaunchedEffect(addBookState) {
         when (addBookState) {
@@ -92,12 +101,8 @@ fun AddBookScreen(
                 Toast.makeText(context, (addBookState as Resource.Error<AddBookResponse>).message ?: "Error Occurred", Toast.LENGTH_SHORT).show()
                 Log.d("parameter", (addBookState as Resource.Error<AddBookResponse>).message)
             }
-            Resource.Loading -> {
-                // Optionally show a loading indicator
-            }
-            null -> {
-                // No action needed
-            }
+            Resource.Loading -> {}
+            null -> {}
         }
     }
 
@@ -143,58 +148,77 @@ fun AddBookScreen(
         )
 
         OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
+            value = state.name,
+            onValueChange = { viewmodel.onEvent(AddBookEvent.NameChanged(it)) },
             label = { Text("Book Name") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(vertical = 8.dp)
+                .focusRequester(focusRequester),
             shape = RoundedCornerShape(20),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Next) }
+            )
         )
 
         // Price
         OutlinedTextField(
-            value = price,
-            onValueChange = { price = it },
+            value = state.price.toString(),
+            onValueChange = {viewmodel.onEvent(AddBookEvent.PriceChanged(it))},
             label = { Text("Price") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             shape = RoundedCornerShape(20),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number,imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Next) }
+            )
         )
 
         // Author Name
         OutlinedTextField(
-            value = authorName,
-            onValueChange = { authorName = it },
+            value = state.authorName,
+            onValueChange = {viewmodel.onEvent(AddBookEvent.AuthorNameChanged(it)) },
             label = { Text("Author Name") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             shape = RoundedCornerShape(20),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Next) }
+            )
         )
 
         // Stock
         OutlinedTextField(
-            value = stock,
-            onValueChange = { stock = it },
+            value = state.stock.toString(),
+            onValueChange = { viewmodel.onEvent(AddBookEvent.StockChanged(it))},
             label = { Text("Stock") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             shape = RoundedCornerShape(20),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Next) }
+            )
         )
 
         // Description
         OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
+            value = state.description,
+            onValueChange = { viewmodel.onEvent(AddBookEvent.DescriptionChanged(it)) },
             label = { Text("Description") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -248,8 +272,6 @@ fun AddBookScreen(
 
 
         // Image Preview (if image URL is available)
-
-        // Image Preview
         if (selectedImageUri != null) {
             AsyncImage(
                 model = selectedImageUri,
@@ -274,11 +296,11 @@ fun AddBookScreen(
                     val imagePart = uriToPngMultipart(selectedImageUri!!, context, "image")
 
                    val bookRequest = BookRequest(
-                       name = name,
-                       price = price.toDouble(),
-                       authorName = authorName,
-                       stock = stock.toInt(),
-                       description = description,
+                       name = state.name,
+                       price = state.price,
+                       authorName = state.authorName,
+                       stock = state.stock,
+                       description = state.description,
                        image = imagePart!!,
                        publishedDate = selectedDate.value?.toString() ?: ""
                    )
@@ -304,34 +326,9 @@ fun AddBookScreen(
             } else {
                 Text(text = "Add Book", fontWeight = FontWeight.Bold)
             }
-//            Text(
-//                text = if (addBookState is Resource.Loading)
-//                    "Adding Book" else "Add Book", fontWeight = FontWeight.Bold)
 
         }
     }
-     //Show loading indicator when deleting
-//    if (addBookState is Resource.Loading) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .background(Color.Black.copy(alpha = 0.5f)),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            Column(
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//                verticalArrangement = Arrangement.Center
-//            ) {
-//                CircularProgressIndicator()
-//                Spacer(modifier = Modifier.height(8.dp)) // Space between progress indicator and text
-//                Text(text = "Adding...", color = Color.White) // Message indicating deletion
-//            }
-//        }
-//    }
+
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AddBookScreenPreview() {
-   // AddBookScreen()
-}

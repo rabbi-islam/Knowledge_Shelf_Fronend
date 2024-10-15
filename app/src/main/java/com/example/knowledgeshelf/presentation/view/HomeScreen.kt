@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.example.knowledgeshelf.R
 import com.example.knowledgeshelf.data.model.book.Books
@@ -37,6 +38,8 @@ import com.example.knowledgeshelf.domain.Resource
 import com.example.knowledgeshelf.presentation.view.components.BookCard
 import com.example.knowledgeshelf.presentation.viewmodel.BookViewmodel
 import com.example.knowledgeshelf.utils.Utils
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 
 @Composable
@@ -98,7 +101,11 @@ fun HomeScreen(
                             role = userInfoFromToken?.role.toString(),
                             onDeleteClick = {
                                 viewmodel.deleteBook(book._id)
-                            }
+                            },
+                            onBookClick = {
+                            },
+                            onCartClick = {}
+
                         )
                     }
                 }

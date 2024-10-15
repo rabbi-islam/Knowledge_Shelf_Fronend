@@ -1,17 +1,20 @@
 package com.example.knowledgeshelf.presentation.viewmodel
 
 import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.knowledgeshelf.data.model.UserProfile
-import com.example.knowledgeshelf.data.model.auth.register.RegistrationResponse
-import com.example.knowledgeshelf.data.model.book.AddBookRequest
 import com.example.knowledgeshelf.data.model.book.AddBookResponse
 import com.example.knowledgeshelf.data.model.book.BookRequest
 import com.example.knowledgeshelf.data.model.book.Books
 import com.example.knowledgeshelf.data.model.book.DeleteBookResponse
 import com.example.knowledgeshelf.data.repository.BookRepository
 import com.example.knowledgeshelf.domain.Resource
+import com.example.knowledgeshelf.presentation.view.addBook.AddBookEvent
+import com.example.knowledgeshelf.presentation.view.addBook.AddBookState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +25,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookViewmodel @Inject constructor(private val bookRepository: BookRepository) : ViewModel() {
+
+    var state by mutableStateOf(AddBookState())
+    fun onEvent(event: AddBookEvent) {
+        when(event){
+            is AddBookEvent.NameChanged -> { state = state.copy(name = event.name) }
+            is AddBookEvent.AuthorNameChanged -> { state = state.copy(authorName = event.authorName) }
+            is AddBookEvent.PriceChanged -> { state = state.copy(price = event.price.toDouble()) }
+            is AddBookEvent.StockChanged -> { state = state.copy(stock = event.stock.toInt()) }
+            is AddBookEvent.DescriptionChanged -> { state = state.copy(description = event.description) }
+        }
+    }
+
     private val _bookResult = MutableStateFlow<Resource<Books>?>(null)
     val bookResult: StateFlow<Resource<Books>?>
         get() = _bookResult

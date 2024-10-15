@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -24,6 +25,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.knowledgeshelf.navigation.Navigation
 import com.example.knowledgeshelf.presentation.ui.theme.KnowledgeShelfTheme
 import com.example.knowledgeshelf.presentation.view.registration.SignUpScreen
+import com.example.knowledgeshelf.presentation.viewmodel.BookViewmodel
 import com.example.knowledgeshelf.presentation.viewmodel.UserViewmodel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,8 +33,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: UserViewmodel by viewModels()
+    private val bookViewModel: BookViewmodel by viewModels()
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -53,7 +57,7 @@ class MainActivity : ComponentActivity() {
                     //containerColor = Color(0xFF1b2a48), // Set background color for the Scaffold
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
-                    Navigation(viewModel = viewModel, modifier = Modifier.padding(innerPadding))
+                    Navigation(userViewModel = viewModel, bookViewmodel = bookViewModel, modifier = Modifier.padding(innerPadding))
                 }
             }
         }

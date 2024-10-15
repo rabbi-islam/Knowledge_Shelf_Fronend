@@ -1,19 +1,8 @@
 package com.example.knowledgeshelf.data.model.book
 
-import android.net.Uri
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-
-data class AddBookRequest(
-    val name: String,
-    val price: Double,
-    val authorName: String,
-    val stock: Int,
-    val description: String,
-    val image: MultipartBody.Part,
-    val publishedDate: String
-)
 
 data class BookRequest(
     val name: String,
@@ -21,7 +10,7 @@ data class BookRequest(
     val authorName: String,
     val stock: Int,
     val description: String,
-    val image: MultipartBody.Part, // Optional, since it may be null if no image is provided
+    val image: MultipartBody.Part,
     val publishedDate: String
 ) {
     private fun String.toRequestBody(): RequestBody {
